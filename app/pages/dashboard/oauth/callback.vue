@@ -6,11 +6,11 @@ const router = useRouter()
 const route = useRoute()
 
 onMounted(() => {
-  const token = route.query.token as string
+  const token = route.query.token
 
   if (token) {
     // Store JWT token
-    localStorage.setItem('SinkSiteToken', token)
+    localStorage.setItem('SinkSiteToken', String(token))
 
     toast.success(t('oauth.login_success'))
 
