@@ -31,6 +31,18 @@ export default defineNuxtConfig({
     caseSensitive: false,
     listQueryLimit: 500,
     disableBotAccessLog: false,
+    // OAuth Configuration
+    oauthProvider: 'github',
+    githubClientId: '',
+    githubClientSecret: '',
+    githubRedirectUri: '',
+    jwtSecret: crypto.randomUUID(),
+    // Admin Configuration
+    adminEmails: '',
+    // Quota Configuration
+    quotaEnabled: 'true',
+    quotaDailyReads: '90000',
+    quotaDailyWrites: '910',
     public: {
       previewMode: '',
       slugDefaultLength: '6',

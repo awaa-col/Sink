@@ -1,3 +1,4 @@
+import type { User } from '@@/schemas/user'
 import { LinkSchema } from '@@/schemas/link'
 
 defineRouteMeta({
@@ -31,6 +32,18 @@ export default eventHandler(async (event) => {
 
   if (!caseSensitive) {
     link.slug = link.slug.toLowerCase()
+  }
+
+  // Associate link with current user
+  const user = event.context.user as User | undefined
+  if (user) {
+    link.userId = user.id
+  }
+
+  // Initialize stats
+  link.stats = {
+    totalClicks: 0,
+    todayClicks: 0,
   }
 
   const { cloudflare } = event.context
