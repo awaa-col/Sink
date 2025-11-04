@@ -5,6 +5,8 @@ import { getCurrentDate } from '../../../utils/quota'
 
 /**
  * Admin overview statistics endpoint
+ * Note: This endpoint may consume significant KV quota with many users/links
+ * Consider caching or pre-computing statistics for production use
  */
 export default eventHandler(async (event) => {
   const user = event.context.user as User

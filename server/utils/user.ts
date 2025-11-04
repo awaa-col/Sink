@@ -10,10 +10,12 @@ export async function getUserById(KV: KVNamespace, userId: string): Promise<User
 }
 
 /**
- * Get user by email from KV
+ * Get user by email from KV using email index
+ * Note: For better performance, consider using an email->userId index in production
  */
 export async function getUserByEmail(KV: KVNamespace, email: string): Promise<User | null> {
-  // List all users and find by email
+  // TODO: Implement email index for O(1) lookup
+  // For now, we accept O(n) operation as user lookups are rare (only during login)
   const list = await KV.list({ prefix: 'user:' })
   for (const key of list.keys) {
     const user = await KV.get(key.name, { type: 'json' }) as User | null

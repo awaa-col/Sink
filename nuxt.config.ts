@@ -36,7 +36,7 @@ export default defineNuxtConfig({
     githubClientId: '',
     githubClientSecret: '',
     githubRedirectUri: '',
-    jwtSecret: crypto.randomUUID(),
+    jwtSecret: '', // IMPORTANT: Must be set in environment for production
     // Admin Configuration
     adminEmails: '',
     // Quota Configuration

@@ -4,6 +4,8 @@ import type { z } from 'zod'
 
 /**
  * Admin domain statistics endpoint - shows top domains by link count
+ * Note: This endpoint fetches all links and may consume significant KV quota
+ * Consider pre-computing domain stats for production use with many links
  */
 export default eventHandler(async (event) => {
   const user = event.context.user as User

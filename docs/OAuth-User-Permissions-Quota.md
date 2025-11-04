@@ -5,6 +5,7 @@ This document describes the OAuth authentication, user permissions system, link 
 ## Features Overview
 
 ### 1. OAuth User Authentication
+
 - GitHub OAuth 2.0 integration (compatible with Cloudflare Workers)
 - JWT-based token authentication using the `jose` library
 - Secure token storage and validation
@@ -12,13 +13,16 @@ This document describes the OAuth authentication, user permissions system, link 
 - Backward compatible with legacy site token authentication
 
 ### 2. User Roles and Permissions
+
 - **Admin Role**: Full access to all features, can view all statistics
 - **User Role**: Can only manage their own links
 - Admin users configured via `NUXT_ADMIN_EMAILS` environment variable
 - Ownership validation on all link operations (edit, delete, view)
 
 ### 3. Link Usage Statistics
+
 Each link tracks:
+
 - **totalClicks**: Total clicks since creation
 - **todayClicks**: Clicks today (resets at UTC 00:00)
 - **lastClickDate**: Last click date for tracking daily resets
@@ -26,13 +30,16 @@ Each link tracks:
 - Automatically updated on each short link access
 
 ### 4. Admin Dashboard
+
 Accessible only to admin users, displays:
+
 - **Overview Statistics**: Total users, total links, today's active users, today's new links
 - **Domain Rankings**: Top 50 most-linked domains
 - **Quota Usage**: Real-time KV operation quota tracking with visual progress bars
 - Color-coded alerts when approaching quota limits
 
 ### 5. KV Quota Hard Limits
+
 - **Daily Read Limit**: 90,000 operations (configurable)
 - **Daily Write Limit**: 910 operations (configurable)
 - Returns HTTP 429 (Too Many Requests) when quota exceeded
@@ -98,25 +105,32 @@ Users logging in with these emails will be granted admin role.
 ### Authentication
 
 #### `GET /api/auth/oauth/authorize`
+
 Redirects user to GitHub OAuth authorization page.
 
 #### `GET /api/auth/oauth/callback`
+
 Handles OAuth callback from GitHub, creates/updates user, generates JWT token.
 
 **Query Parameters:**
+
 - `code`: Authorization code from GitHub
 - `state`: CSRF protection token
 
 **Response:**
+
 - Redirects to `/dashboard/oauth/callback?token=<jwt_token>` on success
 
 #### `GET /api/auth/me`
+
 Returns current authenticated user information.
 
 **Headers:**
+
 - `Authorization: Bearer <jwt_token>`
 
 **Response:**
+
 ```json
 {
   "id": "github:123456",
@@ -128,6 +142,7 @@ Returns current authenticated user information.
 ```
 
 #### `POST /api/auth/logout`
+
 Logs out the current user (JWT tokens are stateless, so actual logout happens client-side).
 
 ### Admin Endpoints
@@ -135,9 +150,11 @@ Logs out the current user (JWT tokens are stateless, so actual logout happens cl
 All admin endpoints require admin role.
 
 #### `GET /api/admin/stats/overview`
+
 Get overall system statistics.
 
 **Response:**
+
 ```json
 {
   "totalUsers": 42,
@@ -148,9 +165,11 @@ Get overall system statistics.
 ```
 
 #### `GET /api/admin/stats/domains`
+
 Get top 50 domains by link count.
 
 **Response:**
+
 ```json
 {
   "domains": [
@@ -162,9 +181,11 @@ Get top 50 domains by link count.
 ```
 
 #### `GET /api/admin/stats/quota`
+
 Get current quota usage.
 
 **Response:**
+
 ```json
 {
   "enabled": true,
@@ -183,13 +204,16 @@ Get current quota usage.
 ```
 
 #### `GET /api/admin/users`
+
 List all users with pagination.
 
 **Query Parameters:**
+
 - `limit`: Results per page (max 100, default 20)
 - `cursor`: Pagination cursor
 
 **Response:**
+
 ```json
 {
   "users": [...],
@@ -201,34 +225,43 @@ List all users with pagination.
 ### Updated Link Endpoints
 
 #### `GET /api/link/list`
+
 - Now filters links by user ownership (non-admin users only see their own links)
 - Returns link statistics (totalClicks, todayClicks)
 
 #### `GET /api/link/query?slug=<slug>`
+
 - Validates user ownership (non-admin users can only query their own links)
 - Returns link statistics
 
 #### `POST /api/link/create`
+
 - Automatically associates link with authenticated user
 - Initializes statistics counters
 
 #### `PUT /api/link/edit`
+
 - Validates user ownership before allowing edits
 - Preserves original statistics
 
 #### `POST /api/link/delete`
+
 - Validates user ownership before allowing deletion
 
 ## Frontend Pages
 
 ### `/dashboard/oauth/login`
+
 OAuth login page with GitHub sign-in button and fallback to token login.
 
 ### `/dashboard/oauth/callback`
+
 OAuth callback handler that stores JWT token and redirects to dashboard.
 
 ### `/dashboard/admin`
+
 Admin dashboard displaying:
+
 - Overview statistics cards
 - Domain rankings table
 - Quota usage with progress bars
@@ -237,6 +270,7 @@ Admin dashboard displaying:
 ## KV Data Structure
 
 ### User Data
+
 ```typescript
 user:${userId} = {
   id: string,              // e.g., "github:123456"
@@ -250,6 +284,7 @@ user:${userId} = {
 ```
 
 ### Link Data (Extended)
+
 ```typescript
 link:${slug} = {
   ...existing_fields,
@@ -263,6 +298,7 @@ link:${slug} = {
 ```
 
 ### Daily Quota
+
 ```typescript
 quota:${YYYY-MM-DD} = {
   reads: number,

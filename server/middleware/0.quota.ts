@@ -32,8 +32,8 @@ export default eventHandler(async (event) => {
   const date = getCurrentDate()
   const quota = await getQuota(KV, date)
 
-  const dailyReads = Number.parseInt(quotaDailyReads)
-  const dailyWrites = Number.parseInt(quotaDailyWrites)
+  const dailyReads = Number(quotaDailyReads)
+  const dailyWrites = Number(quotaDailyWrites)
 
   const { exceeded, reason } = isQuotaExceeded(quota, dailyReads, dailyWrites)
 
