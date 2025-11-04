@@ -4,6 +4,7 @@ import { CalendarPlus2, Copy, CopyCheck, Eraser, Hourglass, Link as LinkIcon, Qr
 import { parseURL } from 'ufo'
 import { toast } from 'vue-sonner'
 import QRCode from './QRCode.vue'
+import StatsDisplay from './StatsDisplay.vue'
 
 const props = defineProps({
   link: {
@@ -200,6 +201,8 @@ function copyLink() {
             </TooltipProvider>
           </template>
           <Separator orientation="vertical" />
+          <StatsDisplay v-if="link.stats" :stats="link.stats" />
+          <Separator v-if="link.stats" orientation="vertical" />
           <span class="truncate">{{ link.url }}</span>
         </div>
       </NuxtLink>

@@ -11,7 +11,8 @@
     "edit": "Edit",
     "delete": "Delete",
     "delete_success": "Delete successful!",
-    "search": "Search"
+    "search": "Search",
+    "or": "or"
   },
   "theme": {
     "toggle": "Toggle theme",
@@ -32,6 +33,16 @@
     "confirm": "Are you sure you want to log out?",
     "action": "LogOut"
   },
+  "oauth": {
+    "login_title": "Sign in to Sink",
+    "login_description": "Sign in with your GitHub account to continue",
+    "login_with_github": "Sign in with GitHub",
+    "use_token_login": "Use Token Login Instead",
+    "login_success": "Successfully logged in!",
+    "login_failed": "Login failed, please try again",
+    "processing": "Processing Login",
+    "please_wait": "Please wait while we complete your login..."
+  },
   "layouts": {
     "footer": {
       "copyright": "Products of HTML.ZONE",
@@ -51,7 +62,8 @@
   "nav": {
     "links": "Links",
     "analysis": "Analysis",
-    "realtime": "Realtime"
+    "realtime": "Realtime",
+    "admin": "Admin"
   },
   "home": {
     "features": {
@@ -169,6 +181,8 @@
     "no_more": "No more links",
     "load_failed": "Loading links failed,",
     "download_qr_code": "Download QR Code",
+    "total_clicks": "total clicks",
+    "today_clicks": "today",
     "sort": {
       "newest": "Newest First",
       "oldest": "Oldest First",
@@ -176,5 +190,30 @@
       "za": "Slug Z-A",
       "tip": "Experience: Only for loaded links"
     }
+  },
+  "admin": {
+    "dashboard": "Admin Dashboard",
+    "dashboard_description": "System overview and statistics",
+    "total_users": "Total Users",
+    "total_links": "Total Links",
+    "today_active_users": "Active Today",
+    "today_new_links": "New Today",
+    "active_today": "Active today",
+    "new_today": "New today",
+    "of_total": "of",
+    "top_domains": "Top Domains",
+    "top_domains_description": "Most linked domains (Top 50)",
+    "links": "links",
+    "quota_usage": "Quota Usage",
+    "quota_description": "Daily KV operations quota",
+    "quota_disabled": "Quota tracking is disabled",
+    "reads": "Reads",
+    "writes": "Writes",
+    "quota_warning": "Approaching quota limit",
+    "quota_reset_info": "Quota resets daily at UTC 00:00",
+    "error_loading_stats": "Failed to load statistics",
+    "error_loading_domains": "Failed to load domain stats",
+    "error_loading_quota": "Failed to load quota information",
+    "no_domains": "No domain data available"
   }
 }
