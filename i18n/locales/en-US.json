@@ -35,8 +35,8 @@
   },
   "oauth": {
     "login_title": "Sign in to Sink",
-    "login_description": "Sign in with your GitHub account to continue",
-    "login_with_github": "Sign in with GitHub",
+    "login_description": "Sign in with your OAuth account to continue",
+    "login_with_github": "Sign in with OAuth",
     "use_token_login": "Use Token Login Instead",
     "login_success": "Successfully logged in!",
     "login_failed": "Login failed, please try again",

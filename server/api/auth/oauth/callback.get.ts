@@ -2,25 +2,36 @@ import { UserSchema } from '@@/schemas/user'
 import { generateToken } from '../../../utils/jwt'
 import { getUserByEmail, isAdmin, saveUser } from '../../../utils/user'
 
-interface GitHubUser {
-  id: number
-  email: string
+interface OAuthUser {
+  id: number | string
+  email?: string
   name?: string
+  username?: string
   avatar_url?: string
-  login: string
+  avatar?: string
+  login?: string
 }
 
-interface GitHubEmail {
+interface OAuthEmail {
   email: string
   primary: boolean
   verified: boolean
 }
 
 /**
- * OAuth Callback endpoint - handles GitHub OAuth callback
+ * OAuth Callback endpoint - handles OAuth callback from GitHub or custom providers
  */
 export default eventHandler(async (event) => {
-  const { githubClientId, githubClientSecret, adminEmails, jwtSecret } = useRuntimeConfig(event)
+  const {
+    oauthProvider,
+    oauthClientId,
+    oauthClientSecret,
+    oauthTokenUrl,
+    oauthUserUrl,
+    adminEmails,
+    jwtSecret,
+  } = useRuntimeConfig(event)
+
   const { code, state } = getQuery(event)
 
   // Verify state parameter
@@ -45,17 +56,35 @@ export default eventHandler(async (event) => {
   }
 
   try {
+    // Determine OAuth endpoints based on provider
+    let tokenEndpoint: string
+    let userEndpoint: string
+
+    if (oauthProvider === 'github') {
+      tokenEndpoint = 'https://github.com/login/oauth/access_token'
+      userEndpoint = 'https://api.github.com/user'
+    }
+    else {
+      // Custom OAuth provider
+      if (!oauthTokenUrl || !oauthUserUrl) {
+        throw new Error('Custom OAuth provider endpoints not configured')
+      }
+      tokenEndpoint = oauthTokenUrl
+      userEndpoint = oauthUserUrl
+    }
+
     // Exchange code for access token
-    const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
+    const tokenResponse = await fetch(tokenEndpoint, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        client_id: githubClientId,
-        client_secret: githubClientSecret,
+        client_id: oauthClientId,
+        client_secret: oauthClientSecret,
         code,
+        grant_type: 'authorization_code',
       }),
     })
 
@@ -65,8 +94,8 @@ export default eventHandler(async (event) => {
       throw new Error(tokenData.error || 'Failed to get access token')
     }
 
-    // Get user info from GitHub
-    const userResponse = await fetch('https://api.github.com/user', {
+    // Get user info from OAuth provider
+    const userResponse = await fetch(userEndpoint, {
       headers: {
         'Authorization': `Bearer ${tokenData.access_token}`,
         'Accept': 'application/json',
@@ -74,11 +103,15 @@ export default eventHandler(async (event) => {
       },
     })
 
-    const githubUser = await userResponse.json() as GitHubUser
+    const oauthUser = await userResponse.json() as OAuthUser
 
-    // Get user email if not present in user data
-    let email = githubUser.email
-    if (!email) {
+    // Extract user information
+    let email = oauthUser.email
+    const name = oauthUser.name || oauthUser.username || oauthUser.login || ''
+    const avatar = oauthUser.avatar_url || oauthUser.avatar || ''
+
+    // For GitHub, try to get email from separate endpoint if not present
+    if (oauthProvider === 'github' && !email) {
       const emailsResponse = await fetch('https://api.github.com/user/emails', {
         headers: {
           'Authorization': `Bearer ${tokenData.access_token}`,
@@ -86,13 +119,13 @@ export default eventHandler(async (event) => {
           'User-Agent': 'Sink-URL-Shortener',
         },
       })
-      const emails = await emailsResponse.json() as GitHubEmail[]
+      const emails = await emailsResponse.json() as OAuthEmail[]
       const primaryEmail = emails.find(e => e.primary && e.verified)
       email = primaryEmail?.email || emails[0]?.email
     }
 
     if (!email) {
-      throw new Error('Failed to get user email from GitHub')
+      throw new Error(`Failed to get user email from ${oauthProvider}`)
     }
 
     const { cloudflare } = event.context
@@ -105,15 +138,15 @@ export default eventHandler(async (event) => {
     // Check if user exists
     let user = await getUserByEmail(KV, email)
 
-    const userId = `github:${githubUser.id}`
+    const userId = `${oauthProvider}:${oauthUser.id}`
 
     if (!user) {
       // Create new user
       user = UserSchema.parse({
         id: userId,
         email,
-        name: githubUser.name || githubUser.login,
-        avatar: githubUser.avatar_url,
+        name,
+        avatar,
         role: isAdmin({ email } as any, adminEmails) ? 'admin' : 'user',
         createdAt: Math.floor(Date.now() / 1000),
         lastLogin: Math.floor(Date.now() / 1000),
@@ -122,8 +155,8 @@ export default eventHandler(async (event) => {
     else {
       // Update existing user
       user.lastLogin = Math.floor(Date.now() / 1000)
-      user.name = githubUser.name || githubUser.login || user.name
-      user.avatar = githubUser.avatar_url || user.avatar
+      user.name = name || user.name
+      user.avatar = avatar || user.avatar
       // Update role based on admin emails
       user.role = isAdmin(user, adminEmails) ? 'admin' : 'user'
     }

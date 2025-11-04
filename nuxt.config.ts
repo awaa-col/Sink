@@ -32,10 +32,14 @@ export default defineNuxtConfig({
     listQueryLimit: 500,
     disableBotAccessLog: false,
     // OAuth Configuration
-    oauthProvider: 'github',
-    githubClientId: '',
-    githubClientSecret: '',
-    githubRedirectUri: '',
+    oauthProvider: 'github', // 'github' or 'custom'
+    oauthClientId: '',
+    oauthClientSecret: '',
+    oauthRedirectUri: '',
+    oauthAuthorizeUrl: '', // For custom OAuth provider
+    oauthTokenUrl: '', // For custom OAuth provider
+    oauthUserUrl: '', // For custom OAuth provider
+    oauthScope: '', // For custom OAuth provider
     jwtSecret: '', // IMPORTANT: Must be set in environment for production
     // Admin Configuration
     adminEmails: '',
