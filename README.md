@@ -53,6 +53,13 @@
 - **Customizable Slug:** Support for personalized slugs and case sensitivity.
 - **🪄 AI Slug:** Leverage AI to generate slugs.
 - **Link Expiration:** Set expiration dates for your links.
+- **🔐 OAuth Authentication:** Secure login with GitHub OAuth 2.0.
+- **👥 User Permissions:** Role-based access control (admin/user roles).
+- **📊 Link Statistics:** Track total clicks and daily usage for each link.
+- **⚡ Admin Dashboard:** System-wide statistics, domain rankings, and quota monitoring.
+- **🎯 KV Quota Management:** Hard limits on daily KV operations with automatic resets.
+
+> **New in this version:** OAuth authentication, user permissions, link statistics tracking, and comprehensive admin dashboard! See [OAuth & User Permissions Documentation](./docs/OAuth-User-Permissions-Quota.md) for details.
 
 ## 🪧 Demo
 

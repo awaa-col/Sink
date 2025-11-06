@@ -1,5 +1,6 @@
 import { customAlphabet } from 'nanoid'
 import { z } from 'zod'
+import { LinkStatsSchema } from './stats'
 
 const { slugRegex } = useAppConfig()
 
@@ -21,4 +22,6 @@ export const LinkSchema = z.object({
   title: z.string().trim().max(2048).optional(),
   description: z.string().trim().max(2048).optional(),
   image: z.string().trim().url().max(2048).optional(),
+  userId: z.string().trim().max(256).optional(), // Owner of the link
+  stats: LinkStatsSchema.optional(),
 })

@@ -31,6 +31,22 @@ export default defineNuxtConfig({
     caseSensitive: false,
     listQueryLimit: 500,
     disableBotAccessLog: false,
+    // OAuth Configuration
+    oauthProvider: 'github', // 'github' or 'custom'
+    oauthClientId: '',
+    oauthClientSecret: '',
+    oauthRedirectUri: '',
+    oauthAuthorizeUrl: '', // For custom OAuth provider
+    oauthTokenUrl: '', // For custom OAuth provider
+    oauthUserUrl: '', // For custom OAuth provider
+    oauthScope: '', // For custom OAuth provider
+    jwtSecret: '', // IMPORTANT: Must be set in environment for production
+    // Admin Configuration
+    adminEmails: '',
+    // Quota Configuration
+    quotaEnabled: 'true',
+    quotaDailyReads: '90000',
+    quotaDailyWrites: '910',
     public: {
       previewMode: '',
       slugDefaultLength: '6',
